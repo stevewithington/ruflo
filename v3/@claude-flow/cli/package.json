@@ -124,7 +124,7 @@
     "@ruvector/rvagent-wasm": "^0.1.0",
     "@ruvector/sona": "^0.1.6",
     "agentdb": "^3.0.0-alpha.14",
-    "agentic-flow": "^3.0.0-alpha.1"
+    "agentic-flow": "^2.0.14"
   },
   "publishConfig": {
     "access": "public",
