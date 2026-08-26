@@ -29,6 +29,26 @@
       "trackingIssue": "https://github.com/ruvnet/agentic-flow/pull/154",
       "expiresAt": "2026-11-19",
       "rationale": "Cannot fully eliminate from the audit graph until either @xenova/transformers itself ships a fix OR agentic-flow drops it entirely (covered by ADR-121 Phase 4 migration). The browser substrate does not invoke embedding code paths, so the optional-dep path is the right install profile. Re-audit when ADR-121 Phase 4 lands or @xenova/transformers ships a CVE-clean version."
+    },
+    {
+      "package": "v3/@claude-flow/browser",
+      "depName": "vitest",
+      "severity": "critical",
+      "via": ["GHSA-5xrq-8626-4rwp"],
+      "tracking": "ruflo#2268 — Vitest <4.1.0 UI server arbitrary-file-read/exec (CWE-862, CVSS 9.8). vitest is a devDependency only — never in the published tarball, never in the runtime path. The advisory's exploit requires the Vitest UI server (vitest --ui) to be listening, which only happens during interactive local test development. CI (--run) and production install (--omit=dev) never activate the UI server. Spec was already bumped to ^4.1.0 in v3/@claude-flow/browser/package.json on 2026-06-02 (release/3.10.34); the standalone-publish package-lock.json carries workspace:* refs that npm cannot resolve in isolation, so the lockfile refresh has to wait until the next workspace-coordinated rebuild. Tracked separately so this entry expires the moment that rebuild lands.",
+      "trackingIssue": "https://github.com/ruvnet/ruflo/issues/2268",
+      "expiresAt": "2026-09-02",
+      "rationale": "devDependency-only + exploit requires `vitest --ui` which is local-dev only. Spec already requires ^4.1.0; only the standalone package-lock graph hasn't refreshed (workspace:* protocol limitation on raw `npm install`). Zero production / CI exposure. Re-audit and remove this entry the next time the browser's package-lock.json is regenerated."
+    },
+    {
+      "package": "plugins/ruflo-graph-intelligence",
+      "depName": "@claude-flow/cli",
+      "severity": "high",
+      "via": ["@claude-flow/embeddings", "@claude-flow/guidance"],
+      "tracking": "ruflo#2412 follow-up — @claude-flow/cli is declared as a peerDependency by ruflo-graph-intelligence; the plugin does not redistribute cli's dependency graph (the consumer installs @claude-flow/cli@latest separately). The audit script treats peerDependencies as direct deps, so it surfaces every HIGH transitive inside cli's own tree (xenova/transformers, agentdb's opentelemetry chain, onnxruntime-web) inside this plugin's report. Each of those transitives is independently triaged in its own package (see the v3/@claude-flow/browser entries above) and the cli already runs its own audit pipeline on every publish. Accepting this pair so the plugin's audit isn't transitively blocked on cli's chain.",
+      "trackingIssue": "https://github.com/ruvnet/ruflo/issues/2412",
+      "expiresAt": "2026-11-25",
+      "rationale": "Peer-dependency-only — the plugin does not redistribute cli's transitives. cli@3.14.2 ships its own audit on each publish. Re-audit and drop this entry once either (a) the peer is removed in favor of a slim interface package or (b) cli's tree no longer reports HIGH transitives."
     }
   ],
   "lockfile": [

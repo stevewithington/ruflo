@@ -33,7 +33,7 @@ export function generateSettings(options: InitOptions): object {
       'Bash(npx @claude-flow*)',
       'Bash(npx claude-flow*)',
       'Bash(node .claude/*)',
-      'mcp__claude-flow__:*',
+      'mcp__claude-flow__*',
     ],
     deny: [
       'Read(./.env)',
@@ -60,8 +60,8 @@ export function generateSettings(options: InitOptions): object {
   }
 
   // Note: Claude Code expects 'model' to be a string, not an object
-  // Model preferences are stored in claudeFlow settings instead
-  // settings.model = 'claude-sonnet-4-5-20250929'; // Uncomment if you want to set a default model
+  // Additional ruflo-specific model preferences live in claudeFlow.modelPreferences below
+  settings.model = 'claude-sonnet-5';
 
   // Add Agent Teams configuration (experimental feature)
   settings.env = {
@@ -85,7 +85,7 @@ export function generateSettings(options: InitOptions): object {
       shell: platform.shell,
     },
     modelPreferences: {
-      default: 'claude-opus-4-7',
+      default: 'claude-sonnet-5',
       routing: 'claude-haiku-4-5-20251001',
     },
     agentTeams: {
@@ -94,7 +94,11 @@ export function generateSettings(options: InitOptions): object {
       taskListEnabled: true,
       mailboxEnabled: true,
       coordination: {
-        autoAssignOnIdle: true,       // Auto-assign pending tasks when teammate is idle
+        // #3031: Liveness alone is not authority. Keep idle assignment off
+        // until the scheduler can prove task ownership, agent scope, and a
+        // refusal/back-off state. Users may explicitly opt in after supplying
+        // those controls in their host configuration.
+        autoAssignOnIdle: false,
         trainPatternsOnComplete: true, // Train neural patterns when tasks complete
         notifyLeadOnComplete: true,   // Notify team lead when tasks complete
         sharedMemoryNamespace: 'agent-teams', // Memory namespace for team coordination
@@ -102,7 +106,7 @@ export function generateSettings(options: InitOptions): object {
       hooks: {
         teammateIdle: {
           enabled: true,
-          autoAssign: true,
+          autoAssign: false,
           checkTaskList: true,
         },
         taskCompleted: {

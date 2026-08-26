@@ -93,6 +93,7 @@ export type {
 
   // Utility Types
   EmbeddingGenerator,
+  BatchEmbeddingGenerator,
 } from './types.js';
 
 // Utility Functions and Constants (runtime values)
@@ -177,11 +178,31 @@ export type {
   RuntimeConfig,
 } from './controller-registry.js';
 
+// ===== Tiered Memory with Temporal Validity (Zep/Graphiti-style) =====
+export { TieredMemoryStore, isTemporallyValid } from './tiered-memory.js';
+export type {
+  TemporalStoreOptions,
+  TieredRecallOptions,
+  TieredMemoryEntry,
+  TieredStoreResult,
+} from './tiered-memory.js';
+
 // ===== Core Components =====
 export { AgentDBAdapter } from './agentdb-adapter.js';
 export type { AgentDBAdapterConfig } from './agentdb-adapter.js';
 export { AgentDBBackend } from './agentdb-backend.js';
 export type { AgentDBBackendConfig } from './agentdb-backend.js';
+export {
+  AgentDbRetrievalGuard,
+  createAgentDbRetrievalGuard,
+  isRetrievalGuardEnabled,
+  isRetrievalGuardStrict,
+} from './agentdb-retrieval-guard.js';
+export type {
+  RetrievalGuardConfig,
+  GuardedSearchResult,
+  FilteredSearchResults,
+} from './agentdb-retrieval-guard.js';
 export { SQLiteBackend } from './sqlite-backend.js';
 export type { SQLiteBackendConfig } from './sqlite-backend.js';
 export { SqlJsBackend } from './sqljs-backend.js';
